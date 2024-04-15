@@ -112,7 +112,9 @@ descargar el instalador de Node.js para el SO correspondiente.
 `npm start`
 
 
-
+# Usuario y contraseña actual de ElasticSearch
+#Usuario: elastic
+#Contraseña:  CQNsE5xm6jFcvfAt9xnD
 
 
 
