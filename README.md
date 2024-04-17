@@ -32,13 +32,6 @@ brew install sqlite` #sqlite==3.41.2
 `conda env update --file requirements.yml --prune`
 
 
-# Ejecución del proyecto:
-# Craweler
-#Ejecutar los programas crawler, joiner y elastic para obtener los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizar un proceso NLP y crear un único archivo .json preparado para indexar en elasticSearch.
-`python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
-`python -m src.joiner.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json".
-`python -m src.elasticSearch.app` --> prepara el archivo "webpages_clean.jsonl" para ser indexado en ElasticSearch.
-
 # Docker (https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
 Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el script:
   #Crear red Elastic y Kibana
@@ -91,14 +84,19 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
   Seleccionar el índice webpages y hacer click en el botón "Discover Index" para visualizar la información.
 #Además, en el buscador podemos realizar búsquedas filtradas por los campos de las páginas web indexadas.
 
+# Ejecución del proyecto:
+# Craweler
+#Ejecutar los programas crawler, joiner y elastic para obtener los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizar un proceso NLP y crear un único archivo .json preparado para indexar en elasticSearch.
+`python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
+`python -m src.joiner.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json".
+
 # Test ElasticSearch POR TERMINAL: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch
 #Ejecutar el siguiente comando para guardar la clave de conexión con la API de OpenAI:
 #Crear API Key en https://platform.openai.com/account/api-keys
 `export OPENAI_API_KEY="tu_clave_de_api"` 
 #Ejecutar el siguiente comando para ejecutar el archivo: 
-`python -m src.indexer.app`
-
-# Ejemplo de pregunta al chatbot:
+`python -m src.indexer.app` --> indexa los datos en ElasticSearchc, creando un índice de vectores. También ejecuta una pregunta al usuario por la Terminal.
+# Ejemplo de pregunta al chatbot por TERMINAL:
 #Que tipo de estudios puedo realizar en la Universidad Europea?
 
 # Test ElasticSearch POR FRONTEND: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch
@@ -115,6 +113,15 @@ descargar el instalador de Node.js para el SO correspondiente.
 # Usuario y contraseña actual de ElasticSearch
 #Usuario: elastic
 #Contraseña:  CQNsE5xm6jFcvfAt9xnD
+
+# Instalacion de frontend del proyecto chat-bot de ElasticSearch
+`cd frontend`
+`yarn`
+`yarn add react-scripts`
+`yarn start`
+# Ejemplo de pregunta al chatbot por FRONTEND:
+#Que tipo de estudios puedo realizar en la Universidad Europea?
+
 
 
 

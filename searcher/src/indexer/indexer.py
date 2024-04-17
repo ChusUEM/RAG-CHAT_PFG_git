@@ -102,7 +102,8 @@ class Indexer:
             )
 
     # Generar una respuesta a partir de una pregunta introducida por el usuario en el chat (Terminal)
-    def generate_response(self, question):
+
+    def generate_response_terminal(self, question):
         try:
             # Buscar los documentos más relevantes para la pregunta
             search = (

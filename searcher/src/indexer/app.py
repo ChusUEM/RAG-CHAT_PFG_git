@@ -8,5 +8,5 @@ if __name__ == "__main__":
     question = input("Por favor, introduce tu pregunta: ")
 
     # Genera y muestra la respuesta
-    response = indexer.generate_response(question)
+    response = indexer.generate_response_terminal(question)
     print("Respuesta:", response)
