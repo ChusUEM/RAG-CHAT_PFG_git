@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
 import openai
 from urllib3.util.ssl_ import create_urllib3_context
 import ssl
@@ -58,37 +59,36 @@ def buscar_respuesta():
         pregunta = data["pregunta"]
         print(f"Pregunta recibida: {pregunta}")
 
-        # Realizar una búsqueda en Elasticsearch
-        resultado_elasticsearch = es_connection.es.search(
-            index="rag-chat2-vectorized",
-            body={"query": {"match": {"document": pregunta}}},
+        # Buscar los documentos más relevantes para la pregunta
+        search = (
+            Search(using=es_connection.es, index="rag-chat2-vectorized")
+            .query("match", document=pregunta)
+            .sort("_score")
         )
+        # Ejecutar la búsqueda y obtener los documentos
+        response = search[0:5].execute()
+        print("Resultados más relevantes:")
+        for hit in response:
+            print(f"{hit.id} Título: {hit.title}")
 
-        # Acceder a los documentos que coinciden con la consulta
-        documentos_coincidentes = resultado_elasticsearch["hits"]["hits"]
+        # Construir el contexto a partir de los documentos
+        context = " ".join([hit.document for hit in response])
 
-        # Imprimir los documentos que coinciden con la consulta
-        for doc in documentos_coincidentes:
-            print(doc)
-
-    except Exception as e:
-        print(f"Error: {e}")
-        tb = traceback.format_exc()
-        return str({"error": str(e), "trace": tb}), 500
-
-    # Procesamiento con la API de OpenAI
-    try:
-        respuesta_openai = openai.Completion.create(
-            engine="davinci-002", prompt=pregunta, max_tokens=50
+        # Generar una respuesta a partir de la pregunta y el contexto
+        openai_response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": context},
+                {"role": "user", "content": pregunta},
+            ],
         )
-        mejor_respuesta = respuesta_openai.choices[0].text.strip()
-    except Exception as e:
-        print(f"Error: {e}")
-        tb = traceback.format_exc()
-        return str({"error": str(e), "trace": tb}), 500
+        # Devolver el contenido de la respuesta
+        return openai_response["choices"][0]["message"]["content"]
 
-    # Devolver solo la respuesta de OpenAI como un string
-    return mejor_respuesta
+    # Manejar cualquier error que pueda ocurrir
+    except Exception as e:
+        print(f"Error generating response: {e}")
+        return str({"error": str(e), "trace": e}), 500
 
 
 if __name__ == "__main__":
