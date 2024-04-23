@@ -69,7 +69,7 @@ def buscar_respuesta():
         response = search[0:5].execute()
         print("Resultados más relevantes:")
         for hit in response:
-            print(f"{hit.id} Título: {hit.title}")
+            print(f"id: {hit.id} Título: {hit.title}")
 
         # Construir el contexto a partir de los documentos
         context = " ".join([hit.document for hit in response])
