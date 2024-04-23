@@ -20,8 +20,8 @@ def chat():
 
 def search_es(query):
     s = Search(
-        using=es, index="my_index"
-    )  # Asegúrate de reemplazar 'my_index' con el nombre de tu índice Elasticsearch
+        using=es, index="rag-chat2-vectorized"  # Nombre del índice Elasticsearch
+    )
     s = s.query("match", message=query)
     response = s.execute()
     if response.hits:
