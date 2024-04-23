@@ -1,6 +1,7 @@
 # Importar las librerías necesarias
 import ssl
 from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Q
 from elasticsearch_dsl import Search
 import os
 from urllib3 import disable_warnings, exceptions
@@ -35,6 +36,8 @@ class Indexer:
             ),
             verify_certs=False,
         )
+        self.model = None
+        self.dct = None
 
     def indexer(self):
         # Ruta relativa al archivo
@@ -50,13 +53,26 @@ class Indexer:
                 documents.append(obj["text"].split())
 
         # Crear un diccionario a partir de los documentos
-        dct = Dictionary(documents)
+        self.dct = Dictionary(documents)
         # Crear una representación de bolsa de palabras de los documentos
-        corpus = [dct.doc2bow(doc) for doc in documents]
+        corpus = [self.dct.doc2bow(doc) for doc in documents]
         # Entrenar el modelo TF-IDF
-        model = TfidfModel(corpus)
+        self.model = TfidfModel(corpus)
+        # Guardar el modelo
+        print("Saving model...")
+        model_save_path = "/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/etc/models/tfidf_model"
+        if not os.path.exists(os.path.dirname(model_save_path)):
+            os.makedirs(os.path.dirname(model_save_path))
+        self.model.save(model_save_path)
+        print(f"Model saved at {model_save_path}.")
+
+        # Cargar el modelo
+        print("Loading model...")
+        model_load_path = "/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/etc/models/tfidf_model"
+        self.loaded_model = TfidfModel.load(model_load_path)
+        print(f"Model loaded from {model_load_path}.")
         # Vectorizar los documentos
-        vectors = [model[doc] for doc in corpus]
+        vectors = [self.model[doc] for doc in corpus]
         # Convertir los vectores a listas de floats
         vectors = [[value for id, value in vector] for vector in vectors]
         # Ajustar la dimensionalidad de los vectores a 231
@@ -101,18 +117,48 @@ class Indexer:
                 },
             )
 
-    # Generar una respuesta a partir de una pregunta introducida por el usuario en el chat (Terminal)
+    # Transformar una pregunta en un vector
+    def transform_question_to_vector(self, question):
+        # Preprocesar la pregunta y convertirla en una bolsa de palabras
+        question_bow = self.dct.doc2bow(question.lower().split())
+        # Transformar la bolsa de palabras en un vector TF-IDF
+        question_vector = self.loaded_model[question_bow]
+        # Convertir el vector en una lista de floats
+        question_vector = [value for id, value in question_vector]
+        # Ajustar la dimensionalidad del vector a 231
+        question_vector = question_vector[:231] + [0.0] * (231 - len(question_vector))
+        return question_vector
 
-    def generate_response_terminal(self, question):
+    # Generar una respuesta a partir de una pregunta introducida por el usuario en el chatbot
+    def generate_response(self, question):
         try:
+            # Transformar la pregunta en un vector
+            question_vector = self.transform_question_to_vector(question)
+
+            # Crear una consulta de similitud de coseno
+            cosine_sim_query = Q(
+                "script_score",
+                query={"match_all": {}},
+                script={
+                    "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
+                    "params": {"query_vector": question_vector},
+                },
+            )
+
             # Buscar los documentos más relevantes para la pregunta
             search = (
                 Search(using=self.es, index="rag-chat2-vectorized")
-                .query("match", document=question)
+                .query(cosine_sim_query)
                 .sort("_score")
             )
+
             # Ejecutar la búsqueda y obtener los documentos
-            response = search[0:5].execute()
+            response = search[0:10].execute()
+
+            relevant_docs_info = [
+                {"id": hit.id, "title": hit.title} for hit in response
+            ]
+
             context = " ".join([hit.document for hit in response])
             # Generar una respuesta a partir de la pregunta y el contexto
             openai_response = openai.ChatCompletion.create(
@@ -123,7 +169,11 @@ class Indexer:
                 ],
             )
             # Devolver el contenido de la respuesta
-            return openai_response["choices"][0]["message"]["content"]
+            return (
+                openai_response["choices"][0]["message"]["content"],
+                relevant_docs_info,
+            )
+
         # Manejar cualquier error que pueda ocurrir
         except Exception as e:
             print(f"Error generating response: {e}")
