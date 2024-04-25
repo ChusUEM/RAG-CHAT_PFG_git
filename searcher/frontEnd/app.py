@@ -44,10 +44,11 @@ def buscar_respuesta():
         print(f"Pregunta recibida: {pregunta}")
 
         # Utilizar el método generate_response de la clase Indexer para generar la respuesta y obtener relevant_doc_info
-        respuesta, relevant_doc_info = es_connection.generate_response(pregunta)
-        print(f"Documentos para la respuesta: {relevant_doc_info}")
-        # Devolver el contenido de la respuesta
-        return respuesta
+        respuesta, relevant_docs_info = es_connection.generate_response(pregunta)
+        print(f"Documentos para la respuesta: {relevant_docs_info}")
+
+        # Devolver el contenido de la respuesta y los enlaces en un objeto JSON
+        return jsonify({"respuesta": respuesta, "enlaces": relevant_docs_info})
 
     # Manejar cualquier error que pueda ocurrir
     except Exception as e:
