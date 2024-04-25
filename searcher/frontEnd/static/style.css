@@ -14,9 +14,12 @@ h1 {
 }
 
 .container {
-    width: 60%;
-    margin: center;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* transform: translateY(-30%); */
 }
 
 input[type="text"] {
@@ -57,8 +60,18 @@ button:hover {
 .main-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    height: 100vh;
-    transform: translateY(-30%);
+    min-height: 100vh;
+    margin-top: 50px; /* Ajusta este valor según tus necesidades */
+}
+
+#contenedor-respuesta {
+    width: 80%; 
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    word-wrap: break-word;
 }
