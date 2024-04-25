@@ -3,24 +3,49 @@ function buscarRespuesta() {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/buscar', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // Crear un nuevo div para el mensaje de carga
+    var divCarga = document.createElement('div');
+    divCarga.id = 'carga';
+    divCarga.innerHTML = 'Cargando...';
+
+    // Agregar el div de carga al div #respuesta
+    var respuestas = document.getElementById('respuesta');
+    respuestas.appendChild(divCarga);
+
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
+            // Eliminar el div de carga
+            var divCarga = document.getElementById('carga');
+            respuestas.removeChild(divCarga);
+
             if (xhr.status == 200) {
-                var respuesta = xhr.responseText;
+                var data = JSON.parse(xhr.responseText);
+                var respuesta = data.respuesta;
+                var enlaces = data.enlaces;
 
                 // Crear un nuevo div para la pregunta
                 var divPregunta = document.createElement('div');
-                divPregunta.textContent = 'Pregunta: ' + pregunta;
+                divPregunta.innerHTML = '<strong>Pregunta recibida: </strong>' + pregunta;
 
                 // Crear un nuevo div para la respuesta
                 var divRespuesta = document.createElement('div');
-                divRespuesta.textContent = 'Respuesta: ' + respuesta;
+                divRespuesta.innerHTML = '<strong>Respuesta emitida: </strong>' + respuesta;
 
-                // Limpiar el div #resultado y agregar los nuevos divs
-                var resultado = document.getElementById('resultado');
-                resultado.innerHTML = '';
-                resultado.appendChild(divPregunta);
-                resultado.appendChild(divRespuesta);
+                // Crear un nuevo div para los enlaces
+                var divEnlaces = document.createElement('div');
+                divEnlaces.innerHTML = '<strong>Para más información, consulte estos enlaces: </strong>';
+                for (var i = 0; i < enlaces.length; i++) {
+                    var a = document.createElement('a');
+                    a.href = enlaces[i].url;
+                    a.textContent = enlaces[i].title;
+                    divEnlaces.appendChild(a);
+                }
+
+                // Agregar los nuevos divs al div #respuesta
+                respuestas.appendChild(divPregunta);
+                respuestas.appendChild(divRespuesta);
+                respuestas.appendChild(divEnlaces);
             } else {
                 console.error('Error al buscar respuesta:', xhr.status);
             }

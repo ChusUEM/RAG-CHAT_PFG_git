@@ -156,7 +156,7 @@ class Indexer:
             response = search[0:10].execute()
 
             relevant_docs_info = [
-                {"id": hit.id, "title": hit.title} for hit in response
+                {"url": hit.url, "title": hit.title} for hit in response
             ]
 
             context = " ".join([hit.document for hit in response])
