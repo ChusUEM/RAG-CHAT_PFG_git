@@ -22,6 +22,8 @@ brew install sqlite` #sqlite==3.41.2
 #Instalar dependencias --> 
 `cd searcher`
 `pip install -r requirements.txt`
+#Cargo las variables de entorno
+`source .env` o `export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
 
 #Opcion b: Crear entorno de Conda
 `conda env create --name websearcher --file requirements.yml`
