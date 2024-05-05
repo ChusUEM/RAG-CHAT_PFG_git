@@ -79,12 +79,12 @@ class Indexer:
         vectors = [(vector[:231] + [0.0] * (231 - len(vector))) for vector in vectors]
 
         # Eliminar el índice si ya existe
-        if self.es.indices.exists(index="rag-chat2-vectorized"):
-            self.es.indices.delete(index="rag-chat2-vectorized")
+        if self.es.indices.exists(index="rag-chat3-vectorized"):
+            self.es.indices.delete(index="rag-chat3-vectorized")
 
         # Crear el índice con el mapeo correcto
         self.es.indices.create(
-            index="rag-chat2-vectorized",
+            index="rag-chat3-vectorized",
             body={
                 "mappings": {
                     "properties": {
@@ -107,7 +107,7 @@ class Indexer:
                 i // 2
             ]  # Usar la división entera para obtener el índice correcto
             self.es.index(
-                index="rag-chat2-vectorized",
+                index="rag-chat3-vectorized",
                 body={
                     "id": obj["id"],
                     "title": obj["title"],
@@ -147,7 +147,7 @@ class Indexer:
 
             # Buscar los documentos más relevantes para la pregunta
             search = (
-                Search(using=self.es, index="rag-chat2-vectorized")
+                Search(using=self.es, index="rag-chat3-vectorized")
                 .query(cosine_sim_query)
                 .sort("_score")
             )
