@@ -11,6 +11,7 @@ import urllib3
 import openai
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Establecer la clave de API de OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -57,7 +58,7 @@ class Indexer:
         # Crear una representación de bolsa de palabras de los documentos
         corpus = [self.dct.doc2bow(doc) for doc in documents]
         # Entrenar el modelo TF-IDF
-        self.model = TfidfModel(corpus)
+        self.model = TfidfModel(corpus, smartirs="ntc")
         # Guardar el modelo
         print("Saving model...")
         model_save_path = "/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/etc/models/tfidf_model"
@@ -153,7 +154,7 @@ class Indexer:
             )
 
             # Ejecutar la búsqueda y obtener los documentos
-            response = search[0:10].execute()
+            response = search[0:5].execute()
 
             relevant_docs_info = [
                 {"url": hit.url, "title": hit.title} for hit in response

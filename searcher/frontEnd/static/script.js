@@ -40,6 +40,13 @@ function buscarRespuesta() {
                     a.href = enlaces[i].url;
                     a.textContent = enlaces[i].title;
                     divEnlaces.appendChild(a);
+
+                    // Imprimir en la consola el enlace y el elemento 'a' creado
+                    console.log("Enlace: ", enlaces[i]);
+                    console.log("Elemento 'a' creado: ", a);
+
+                // Agregar un espacio después de cada enlace
+                divEnlaces.innerHTML += ' ';
                 }
 
                 // Agregar los nuevos divs al div #respuesta

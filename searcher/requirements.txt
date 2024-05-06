@@ -48,3 +48,4 @@ langchain-text-splitters
 gensim
 build
 unidecode
+scikitlearn
