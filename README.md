@@ -91,6 +91,10 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 #Ejecutar los programas crawler, joiner y elastic para obtener los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizar un proceso NLP y crear un único archivo .json preparado para indexar en elasticSearch.
 `python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
 `python -m src.joiner.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json".
+`python -m src.elasticSearch.app` --> adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
+`python -m src.indexer.app` --> indexa el contenido de "webpages_clean.jsonl" en ElasticSearch creando un índice de vectores.
+`python frontEnd/app.py` --> ejecutar el frontEnd sobre el que se emitirán preguntas y se recibirán respuestas a través de consultas al índice de ElasticSearch.
+
 
 # Test ElasticSearch POR TERMINAL: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch
 #Ejecutar el siguiente comando para guardar la clave de conexión con la API de OpenAI:
