@@ -47,6 +47,9 @@ class Chatbot:
         return question_vector
 
     def generate_response(self, question):
+        # Verificar si la pregunta está vacía
+        if not question.strip():
+            return "Introduce alguna pregunta para obtener respuesta..."
         try:
             # Transformar la pregunta en un vector
             question_vector = self.transform_question_to_vector(question)

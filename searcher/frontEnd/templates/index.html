@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
+    <title>RAG-CHAT</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
     <div class="main-container">
-        <h1>Chatbot</h1>
-        <input type="text" id="pregunta" placeholder="Introduce tu pregunta">
-        <button onclick="buscarRespuesta()">Buscar</button>
+        <img src="{{ url_for('static', filename='img/RAG-CHAT_logo_v2.gif') }}" alt="My Image">
+        <input type="text" id="pregunta" placeholder="Introduce tu pregunta aquí...">
+        <button onclick="buscarRespuesta()">Preguntar</button>
         <div id="contenedor-respuesta">
             <div id="respuesta"></div>
         </div>

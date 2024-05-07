@@ -1,5 +1,16 @@
 function buscarRespuesta() {
     var pregunta = document.getElementById('pregunta').value;
+
+    // Verificar si la pregunta está vacía
+    if (!pregunta.trim()) {
+        var respuestas = document.getElementById('respuesta');
+        var divPrincipal = document.createElement('div');
+        divPrincipal.className = 'bloque-respuesta';
+        divPrincipal.innerHTML = 'Introduce alguna pregunta para obtener respuesta...';
+        respuestas.appendChild(divPrincipal);
+        return; // Salir de la función
+    }
+
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/buscar', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -46,7 +57,7 @@ function buscarRespuesta() {
 
                 // Crear un nuevo div para los enlaces
                 var divEnlaces = document.createElement('div');
-                divEnlaces.innerHTML = '<strong>Para más información, consulte estos enlaces: </strong>';
+                divEnlaces.innerHTML = '<strong>Para más información, consulta: </strong>';
                 for (var i = 0; i < enlaces.length; i++) {
                     var a = document.createElement('a');
                     a.href = enlaces[i].url;
