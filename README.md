@@ -94,6 +94,12 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 `python -m src.elasticSearch.app` --> adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
 `python -m src.indexer.app` --> indexa el contenido de "webpages_clean.jsonl" en ElasticSearch creando un índice de vectores.
 `python frontEnd/app.py` --> ejecutar el frontEnd sobre el que se emitirán preguntas y se recibirán respuestas a través de consultas al índice de ElasticSearch.
+#En caso de obtener error de carga de variables de entorno (no se encuentra el directorio "src" por ejemplo), ejecutar el siguiente comando:
+`export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
+#En caso de error de puerto ocupado, ejecutar el siguiente comando:
+`lsof -i :5001`
+`kill -9 <PID>` --> PID es el número de proceso que aparece en la consola.
+
 
 
 # Test ElasticSearch POR TERMINAL: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch

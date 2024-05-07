@@ -1,0 +1,8 @@
+#Ignorar archivos de pycache
+__pycache__/
+
+#Ignorar archivos de .pyc
+*.pyc
+
+#Ignorar archivos de .DS_Store
+.DS_
