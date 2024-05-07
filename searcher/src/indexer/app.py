@@ -5,8 +5,8 @@ if __name__ == "__main__":
     indexer.indexer()
 
     # Solicita una pregunta del usuario
-    question = input("Por favor, introduce tu pregunta: ")
+    # question = input("Por favor, introduce tu pregunta: ")
 
     # Genera y muestra la respuesta
-    response = indexer.generate_response_terminal(question)
-    print("Respuesta:", response)
+    # response = indexer.generate_response_terminal(question)
+    # print("Respuesta:", response)

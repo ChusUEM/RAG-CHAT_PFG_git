@@ -49,3 +49,4 @@ gensim
 build
 unidecode
 scikitlearn
+joblib

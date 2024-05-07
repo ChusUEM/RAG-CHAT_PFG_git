@@ -1,46 +1,106 @@
-from flask import Flask, request, jsonify
+from joblib import load
 from elasticsearch_dsl import Search
 import openai
+from urllib3.util.ssl_ import create_urllib3_context
+import ssl
+from elasticsearch import Elasticsearch
+import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+import nltk
+from nltk.corpus import stopwords
 
-app = Flask(__name__)
 
+class Chatbot:
+    def __init__(self):
+        # Cargar el vectorizador desde el archivo
+        self.vectorizer = load("./etc/models/tfidf_vectorizer.joblib")
+        self.pca = load("pca.joblib")
+        # Conexión con Elasticsearch
+        context = create_urllib3_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        es_url = os.getenv("ELASTICSEARCH_URL")
+        if not es_url:
+            raise ValueError("ELASTICSEARCH_URL environment variable is not set")
+        self.es = Elasticsearch(
+            [es_url],
+            http_auth=(
+                os.getenv("ELASTICSEARCH_USER"),
+                os.getenv("ELASTICSEARCH_PASSWORD"),
+            ),
+            verify_certs=False,
+        )
+        self.model = None
+        self.dct = None
 
-class ChatByFrontEnd:
-    def __init__(self, es):
-        self.es = es
+    # Transformar una pregunta en un vector
+    def transform_question_to_vector(self, question):
+        # Preprocesar la pregunta y convertirla en una bolsa de palabras
+        question_bow = self.vectorizer.transform([question])
 
-    def generate_response_frontend(self, question):
+        # Transformar la bolsa de palabras en un vector TF-IDF
+        question_vector = self.pca.transform(question_bow.toarray())
+
+        # Convertir el vector en una lista de floats
+        question_vector = question_vector[0].tolist()
+
+        return question_vector
+
+    def generate_response(self, question):
         try:
-            search = (
-                Search(using=self.es, index="rag-chat2-vectorized")
-                .query("match", document=question)
-                .sort("_score")
+            # Transformar la pregunta en un vector
+            question_vector = self.transform_question_to_vector(question)
+
+            # Crear una consulta de similitud coseno
+            s = Search(using=self.es, index="rag-chat4-vectorized").query(
+                {
+                    "script_score": {
+                        "query": {"match_all": {}},
+                        "script": {
+                            "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
+                            "params": {"query_vector": question_vector},
+                        },
+                    }
+                }
             )
-            response = search[0:5].execute()
-            context = " ".join([hit.document for hit in response])
+
+            # Ejecutar la consulta
+            response = s.execute()
+
+            # Obtener los 10 documentos con la puntuación más alta
+            best_matches = response.hits[0:10]
+
+            responses = []
+            # Inicializar una lista vacía para almacenar los documentos
+            documents = []
+
+            # Limitar el número de matches a 3 para evitar alcanzar el límite de RPM
+            for match in best_matches[:3]:
+                # Obtener el contenido del documento
+                document = match.document
+                # Añadir el documento a la lista de documentos
+                documents.append(document)
+
+            # Concatenar los documentos en una sola cadena
+            documents_str = " ".join(documents)
+
+            # Utilizar OpenAI para generar una respuesta basada en los documentos
             openai_response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": context},
+                    {
+                        "role": "system",
+                        "content": "Estás chateando con un asistente de IA que sabe mucho sobre muchos temas.",
+                    },
                     {"role": "user", "content": question},
+                    {"role": "assistant", "content": documents_str},
                 ],
             )
-            return openai_response["choices"][0]["message"]["content"]
+
+            responses.append(openai_response["choices"][0]["message"]["content"])
+
+            return responses, best_matches[:3]
+
         except Exception as e:
             print(f"Error generating response: {e}")
-            return None
-
-
-chat = ChatByFrontEnd(es)  # Asume que 'es' es tu cliente de Elasticsearch
-
-
-@app.route("/api/chat", methods=["POST"])
-def chat_endpoint():
-    data = request.get_json()
-    question = data["question"]
-    response = chat.generate_response_frontend(question)
-    return jsonify({"response": response})
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+            return None, None

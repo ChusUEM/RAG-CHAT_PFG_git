@@ -8,9 +8,11 @@ import ssl
 import os
 import traceback
 import urllib3
-from src.indexer.indexer import (
-    Indexer,
-)  # Importar la clase Indexer de indexer.py
+
+# Importar la clase Chatbot de byFrontEnd.py
+from src.chat.byFrontEnd import (
+    Chatbot,
+)
 
 urllib3.disable_warnings()
 
@@ -18,8 +20,7 @@ urllib3.disable_warnings()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Crear una instancia de la conexión a Elasticsearch
-es_connection = Indexer()  # Utilizar la clase Indexer para la conexión a Elasticsearch
-es_connection.indexer()  # Llamar al método indexer para inicializar los atributos
+es_connection = Chatbot()  # Utilizar la clase Chatbot para la conexión a Elasticsearch
 
 app = Flask(__name__, static_folder="static")
 app.debug = True
@@ -43,8 +44,19 @@ def buscar_respuesta():
         pregunta = data["pregunta"]
         print(f"Pregunta recibida: {pregunta}")
 
-        # Utilizar el método generate_response de la clase Indexer para generar la respuesta y obtener relevant_doc_info
+        # Llamar al método transform_question_to_vector con la pregunta del usuario
+        es_connection.transform_question_to_vector(pregunta)
+        # Utilizar el método generate_response de la clase Chatbot para generar la respuesta y obtener relevant_doc_info
         respuesta, relevant_docs_info = es_connection.generate_response(pregunta)
+
+        # Convertir los objetos Hit en diccionarios que solo contienen el título
+        relevant_docs_info = [
+            {
+                "title": doc["title"],
+            }
+            for doc in relevant_docs_info
+        ]
+
         print(f"Documentos para la respuesta: {relevant_docs_info}")
 
         # Devolver el contenido de la respuesta y los enlaces en un objeto JSON
