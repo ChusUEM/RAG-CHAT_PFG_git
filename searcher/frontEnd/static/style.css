@@ -75,3 +75,10 @@ button:hover {
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
     word-wrap: break-word;
 }
+
+.bloque-respuesta {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}

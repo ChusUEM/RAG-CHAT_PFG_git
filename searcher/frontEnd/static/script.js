@@ -4,20 +4,32 @@ function buscarRespuesta() {
     xhr.open('POST', '/buscar', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
+    // Crear un nuevo div principal
+    var divPrincipal = document.createElement('div');
+    divPrincipal.id = 'respuesta' + Date.now(); // Asegurarse de que el id sea único
+    divPrincipal.className = 'bloque-respuesta'; // Agregar la clase 'bloque-respuesta'
+
+    // Crear un nuevo div para el bloque de respuesta
+    var divBloque = document.createElement('div');
+
     // Crear un nuevo div para el mensaje de carga
     var divCarga = document.createElement('div');
     divCarga.id = 'carga';
     divCarga.innerHTML = 'Cargando...';
 
-    // Agregar el div de carga al div #respuesta
+    // Agregar el div de carga al divBloque
+    divBloque.appendChild(divCarga);
+
+    // Agregar el divBloque al divPrincipal
+    divPrincipal.appendChild(divBloque);
+
     var respuestas = document.getElementById('respuesta');
-    respuestas.appendChild(divCarga);
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             // Eliminar el div de carga
             var divCarga = document.getElementById('carga');
-            respuestas.removeChild(divCarga);
+            divBloque.removeChild(divCarga);
 
             if (xhr.status == 200) {
                 var data = JSON.parse(xhr.responseText);
@@ -49,16 +61,19 @@ function buscarRespuesta() {
                 divEnlaces.innerHTML += ' ';
                 }
 
-                // Agregar los nuevos divs al div #respuesta
-                respuestas.appendChild(divPregunta);
-                respuestas.appendChild(divRespuesta);
-                respuestas.appendChild(divEnlaces);
+                // Agregar los nuevos divs al divBloque
+                divBloque.appendChild(divPregunta);
+                divBloque.appendChild(divRespuesta);
+                divBloque.appendChild(divEnlaces);
             } else {
                 console.error('Error al buscar respuesta:', xhr.status);
             }
         }
     };
     xhr.send(JSON.stringify({pregunta: pregunta}));
+
+    // Agregar el divPrincipal al div #respuesta
+    respuestas.appendChild(divPrincipal);
 
     // Limpiar la caja de texto para la próxima pregunta
     document.getElementById('pregunta').value = '';
