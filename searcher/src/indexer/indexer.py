@@ -56,7 +56,7 @@ class Indexer:
 
     def indexer(self):
         # Ruta relativa al archivo
-        file_path = "etc/webpages_clean.jsonl"
+        file_path = "etc/webpages_clean/webpages_clean.jsonl"
         documents = []
 
         # Lectura del archivo jsonl
@@ -72,30 +72,30 @@ class Indexer:
         X = self.vectorizer.fit_transform(documents)
 
         # Crear los directorios necesarios si no existen
-        os.makedirs("searcher/etc/models", exist_ok=True)
+        # os.makedirs("searcher/etc/models", exist_ok=True)
         # Guardar el vectorizador
         dump(self.vectorizer, "etc/models/tfidf_vectorizer.joblib")
 
-        # Reducir la dimensionalidad de los vectores a 168
-        pca = PCA(n_components=168)
+        # Reducir la dimensionalidad de los vectores a 169
+        pca = PCA(n_components=169)
         X_reduced = pca.fit_transform(X.toarray())
 
         # Guardar el PCA
-        dump(pca, "pca.joblib")
+        dump(pca, "etc/models/pca.joblib")
 
         # Eliminar el índice si ya existe
-        if self.es.indices.exists(index="rag-chat4-vectorized"):
-            self.es.indices.delete(index="rag-chat4-vectorized")
+        if self.es.indices.exists(index="rag-chat_index"):
+            self.es.indices.delete(index="rag-chat_index")
 
         # Crear un mapeo para el índice
         mapping = {
             "mappings": {
-                "properties": {"vector": {"type": "dense_vector", "dims": 168}}
+                "properties": {"vector": {"type": "dense_vector", "dims": 169}}
             }
         }
 
         # Crear el índice con el mapeo
-        self.es.indices.create(index="rag-chat4-vectorized", body=mapping)
+        self.es.indices.create(index="rag-chat_index", body=mapping)
 
         # Indexar cada vector de documento en Elasticsearch
         for i, vector in enumerate(X_reduced):
@@ -109,7 +109,7 @@ class Indexer:
             }
 
             # Indexar el documento en Elasticsearch
-            self.es.index(index="rag-chat4-vectorized", id=i, body=doc)
+            self.es.index(index="rag-chat_index", id=i, body=doc)
 
 
 indexer = Indexer()

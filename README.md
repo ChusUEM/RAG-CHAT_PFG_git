@@ -86,12 +86,11 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
   Seleccionar el índice webpages y hacer click en el botón "Discover Index" para visualizar la información.
 #Además, en el buscador podemos realizar búsquedas filtradas por los campos de las páginas web indexadas.
 
-# Ejecución del proyecto:
-# Craweler
-#Ejecutar los programas crawler, joiner y elastic para obtener los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizar un proceso NLP y crear un único archivo .json preparado para indexar en elasticSearch.
+# Ejecución del proyecto: 
+#Acceder al directorio "/searcher"
+#Ejecutar los programas crawler, adapter, indexer y chatbot para realizar el proceso completo del TFG. Este proces obtendrá los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizará un proceso PLN, unirá los .json en uno solo y lo adaptará para crear un único archivo .jsonl preparado para indexar en ElasticSearch. Posteriormente realizará la indexación en Elasticsearch y ejecutará la aplicación web a través de la cual se realizarán las consultas al chatbot (pregunta-respuesta con búsqueda de la información en el índice vectorizado y almacenado en Elasticsearch, devolviendo la respuesta más precisa al usuario, así como los blogs de referencia sobre los que basa su respuesta).
 `python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
-`python -m src.joiner.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json".
-`python -m src.elasticSearch.app` --> adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
+`python -m src.adapter.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json". También adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
 `python -m src.indexer.app` --> indexa el contenido de "webpages_clean.jsonl" en ElasticSearch creando un índice de vectores.
 `python frontEnd/app.py` --> ejecutar el frontEnd sobre el que se emitirán preguntas y se recibirán respuestas a través de consultas al índice de ElasticSearch.
 #En caso de obtener error de carga de variables de entorno (no se encuentra el directorio "src" por ejemplo), ejecutar el siguiente comando:

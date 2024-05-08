@@ -6,7 +6,7 @@ function buscarRespuesta() {
         var respuestas = document.getElementById('respuesta');
         var divPrincipal = document.createElement('div');
         divPrincipal.className = 'bloque-respuesta';
-        divPrincipal.innerHTML = 'Introduce alguna pregunta para obtener respuesta...';
+        divPrincipal.innerHTML = 'Tienes que introducir alguna pregunta para obtener una respuesta...';
         respuestas.appendChild(divPrincipal);
         return; // Salir de la función
     }

@@ -21,11 +21,11 @@ class Crawler:
         self.args = args
 
     def crawl(self) -> None:
-        """Método para crawlear la URL base. `crawl` debe crawlear, desde
+        """Método para crawlear la URL base. `crawl` crawlea, desde
         la URL base `args.url`, usando la librería `requests` de Python,
         el número máximo de webs especificado en `args.max_webs`.
 
-        Para cada nueva URL que se visite, debe almacenar en el directorio
+        Para cada nueva URL que se visite, almacena en el directorio
         `args.output_folder` un fichero .json con lo siguiente:
 
         - "url": URL de la web
@@ -149,10 +149,10 @@ class Crawler:
 
     def find_urls(self, text: str) -> Set[str]:
         """Método para encontrar URLs de la Universidad Europea en el
-        texto de una web. SOLO se deben extraer URLs que aparezcan en
-        como valores "href" y que sean de la Universidad, esto es,
+        texto de una web. SOLO se extraen URLs que aparezcan
+        como valores "href" y que sean blogs de la Universidad, esto es,
         deben empezar por "https://universidadeuropea.com/blog/".
-        `find_urls` será útil para el proceso de crawling en el método `crawl`
+        `find_urls` es útil para el proceso de crawling en el método `crawl`
 
         Args:
             text (str): text de una web

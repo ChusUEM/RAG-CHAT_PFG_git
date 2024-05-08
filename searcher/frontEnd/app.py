@@ -9,8 +9,8 @@ import os
 import traceback
 import urllib3
 
-# Importar la clase Chatbot de byFrontEnd.py
-from src.chat.byFrontEnd import (
+# Importar la clase Chatbot de chatbot.py
+from src.chat.chatbot import (
     Chatbot,
 )
 
