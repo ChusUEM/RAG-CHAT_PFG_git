@@ -44,7 +44,8 @@ function buscarRespuesta() {
 
             if (xhr.status == 200) {
                 var data = JSON.parse(xhr.responseText);
-                var respuesta = data.respuesta;
+                var respuesta = data.respuesta[0];
+                console.log(respuesta);
                 var enlaces = data.enlaces;
 
                 // Crear un nuevo div para la pregunta
@@ -53,6 +54,9 @@ function buscarRespuesta() {
 
                 // Crear un nuevo div para la respuesta
                 var divRespuesta = document.createElement('div');
+                if (/\*\*([\s\S]*?)\*\*/.test(respuesta)) {
+                    respuesta = respuesta.replace(/\*\*([\s\S]*?)\*\*/g, '<strong>$1</strong>');
+                }
                 divRespuesta.innerHTML = '<strong>Respuesta emitida: </strong>' + respuesta;
 
                 // Crear un nuevo div para los enlaces
