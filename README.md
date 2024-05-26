@@ -14,7 +14,7 @@
 #Sqlite
 brew install sqlite` #sqlite==3.41.2
 
-# Searcher
+# Crear el entorno virtual
 #Opcion a: Crear entorno de Python
 `python -m venv envElastic`
 #Activar entorno de Python
@@ -66,6 +66,9 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 `export ELASTICSEARCH_URL=<tu_url>`
 `export ELASTICSEARCH_USER=<tu_usuario>`
 `export ELASTICSEARCH_PASSWORD=<tu_contraseña>`
+#Ejecutar el siguiente comando para guardar la clave de conexión con la API de OpenAI:
+#Crear API Key en https://platform.openai.com/account/api-keys
+`export OPENAI_API_KEY="tu_clave_de_api"` 
 #Guardar el archivo
 #Recargar el archivo de configuración
 #Reiniciar la terminal
@@ -101,37 +104,12 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 
 
 
-# Test ElasticSearch POR TERMINAL: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch
-#Ejecutar el siguiente comando para guardar la clave de conexión con la API de OpenAI:
-#Crear API Key en https://platform.openai.com/account/api-keys
-`export OPENAI_API_KEY="tu_clave_de_api"` 
-#Ejecutar el siguiente comando para ejecutar el archivo: 
-`python -m src.indexer.app` --> indexa los datos en ElasticSearchc, creando un índice de vectores. También ejecuta una pregunta al usuario por la Terminal.
-# Ejemplo de pregunta al chatbot por TERMINAL:
+# Test ElasticSearch POR TERMINAL:
+Ejecutar el siguiente comando para ejecutar el archivo:
+
+# Ejemplo de pregunta al chatbot:
 #Que tipo de estudios puedo realizar en la Universidad Europea?
 
-# Test ElasticSearch POR FRONTEND: creando un índice de vectores con python y añadiendo un documento al índice en ElasticSearch
-#Ir a la página de descargas de Node.js (https://nodejs.org/en/download/) y
-descargar el instalador de Node.js para el SO correspondiente.
-#Instalar dependencias npm
-`pip install npm`
-#Iniciar el paquete, si fuese necesario, cumplimentando las preguntas:
-`npm init`
-#Ejecutar el comando para iniciar el servidor web y mostrar la aplicación:
-`npm start`
-
-
-# Usuario y contraseña actual de ElasticSearch
-#Usuario: elastic
-#Contraseña:  CQNsE5xm6jFcvfAt9xnD
-
-# Instalacion de frontend del proyecto chat-bot de ElasticSearch
-`cd frontend`
-`yarn`
-`yarn add react-scripts`
-`yarn start`
-# Ejemplo de pregunta al chatbot por FRONTEND:
-#Que tipo de estudios puedo realizar en la Universidad Europea?
 
 
 
