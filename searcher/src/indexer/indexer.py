@@ -71,8 +71,6 @@ class Indexer:
         # Ajustar el vectorizador a tus documentos y transformar los documentos en vectores
         X = self.vectorizer.fit_transform(documents)
 
-        # Crear los directorios necesarios si no existen
-        # os.makedirs("searcher/etc/models", exist_ok=True)
         # Guardar el vectorizador
         dump(self.vectorizer, "etc/models/tfidf_vectorizer.joblib")
 
