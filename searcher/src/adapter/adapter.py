@@ -1,10 +1,11 @@
 # Unir todos los archivos json de searcher/etc/wepages en uno solo
 
-import os
 import json
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+import os
+
+import nltk  # type: ignore
+from nltk.corpus import stopwords  # type: ignore
+from nltk.tokenize import word_tokenize  # type: ignore
 
 # Descargar los conjuntos de datos de NLTK necesarios
 nltk.download("punkt")
@@ -43,7 +44,7 @@ class Joiner:
                 tokens = word_tokenize(text)
                 tokens = [word for word in tokens if word.isalpha()]
                 stop_words = set(stopwords.words("spanish"))
-                tokens = [word for word in tokens if not word in stop_words]
+                tokens = [word for word in tokens if word not in stop_words]
 
                 # Obtiene el título omitiendo el inicio de la URL
                 title = webpages["url"].replace(
@@ -87,7 +88,9 @@ def adapt_json(
         data = json.load(f_in)
         for filename, doc in data.items():
             new_doc = {
-                key: doc[key] for key in ["id", "title", "url", "text"] if key in doc
+                key: doc[key]
+                for key in ["id", "title", "url", "text"]
+                if key in doc
             }
             metadata = {"index": {"_index": "rag-chat", "_id": new_doc["id"]}}
             f_out.write(json.dumps(metadata))

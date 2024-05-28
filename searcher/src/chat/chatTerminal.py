@@ -1,5 +1,5 @@
-from elasticsearch_dsl import Search
-import openai
+import openai  # type: ignore
+from elasticsearch_dsl import Search  # type: ignore
 
 
 # Generar una respuesta a partir de una pregunta introducida por el usuario en el chat (Terminal)

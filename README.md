@@ -22,7 +22,7 @@ brew install sqlite` #sqlite==3.41.2
 #Instalar dependencias --> 
 `cd searcher`
 `pip install -r requirements.txt`
-#Cargo las variables de entorno
+#Cargo las variables de entorno, desde el directorio raíz del proyecto
 `source .env` o `export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
 
 #Opcion b: Crear entorno de Conda
@@ -108,7 +108,7 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 Ejecutar el siguiente comando para ejecutar el archivo:
 
 # Ejemplo de pregunta al chatbot:
-#Que tipo de estudios puedo realizar en la Universidad Europea?
+#¿Qué factores afectan al sueldo de un desarrollador web?
 
 
 
