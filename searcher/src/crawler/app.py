@@ -32,7 +32,8 @@ def parse_args():
         "--output-folder",
         type=str,
         default="etc/webpages",
-        help="Carpeta destino donde almacenar el contenido" " de las URLs crawleadas.",
+        help="Carpeta destino donde almacenar el contenido"
+        " de las URLs crawleadas.",
     )
     return parser.parse_args()
 

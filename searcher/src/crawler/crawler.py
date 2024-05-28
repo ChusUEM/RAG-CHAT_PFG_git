@@ -1,17 +1,26 @@
-from argparse import Namespace
-from queue import Queue
+import json
+import os
 import re
 import shutil
-from typing import Set
-from urllib.parse import urlparse
-import requests
-import os
-import json
-from PyPDF2 import PdfReader
-from tqdm import tqdm
+from argparse import Namespace
 from io import BytesIO
-from bs4 import BeautifulSoup
-from unidecode import unidecode
+from queue import Queue
+from typing import List, Set
+from urllib.parse import urlparse
+
+import requests  # type: ignore
+from bs4 import BeautifulSoup  # type: ignore
+from PyPDF2 import PdfReader  # type: ignore
+from tqdm import tqdm  # type: ignore
+from unidecode import unidecode  # type: ignore
+
+
+def get_data() -> Set[str]:
+    my_list: List[str] = []
+    return set(my_list)
+
+
+queue: List[str] = []
 
 
 class Crawler:
@@ -19,6 +28,7 @@ class Crawler:
 
     def __init__(self, args: Namespace):
         self.args = args
+        self.queue: Queue[str] = Queue(self.args.max_webs)
 
     def crawl(self) -> None:
         """Método para crawlear la URL base. `crawl` crawlea, desde
@@ -41,7 +51,7 @@ class Crawler:
         os.mkdir(self.args.output_folder)
 
         # Creamos la cola y añadimos la URL base
-        queue = Queue(self.args.max_webs)
+        queue: Queue[str] = Queue(self.args.max_webs)
         queue.put(self.args.url)
 
         # Creamos un contador para no pasarnos del límite de max_webs
@@ -141,10 +151,14 @@ class Crawler:
 
         # Generamos el nombre del archivo
         parsed_url = urlparse(url)
-        file_name = (parsed_url.netloc + parsed_url.path).replace("/", "-") + ".json"
+        file_name = (parsed_url.netloc + parsed_url.path).replace(
+            "/", "-"
+        ) + ".json"
 
         # Escribimos el archivo con el contenido del diccionario
-        with open(os.path.join(self.args.output_folder, file_name), "w") as file:
+        with open(
+            os.path.join(self.args.output_folder, file_name), "w"
+        ) as file:
             json.dump(data, file)
 
     def find_urls(self, text: str) -> Set[str]:
@@ -161,7 +175,7 @@ class Crawler:
         """
 
         # Parseamos la URL de entrada, para sacar sólo el dominio
-        parsed_url = urlparse(self.args.url)
+        urlparse(self.args.url)
 
         # Definimos la expresión regular para encontrar enlaces que comiencen con la url que se pasa por parámetro, tanto webs como ficheros PDF
         pattern = re.compile(
@@ -176,4 +190,4 @@ class Crawler:
         matches = [match[0] for match in matches]
 
         # Devolvemos la lista de enlaces
-        return list(set(matches))
+        return set(matches)

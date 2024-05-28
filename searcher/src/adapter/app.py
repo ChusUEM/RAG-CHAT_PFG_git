@@ -1,5 +1,4 @@
-from .adapter import Joiner
-from .adapter import PrepareJsonL
+from .adapter import Joiner, PrepareJsonL
 
 if __name__ == "__main__":
     joiner = Joiner()

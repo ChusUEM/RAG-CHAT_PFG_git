@@ -1,12 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
-from elasticsearch_dsl import Q
-import openai
+import openai  # type: ignore
 from urllib3.util.ssl_ import create_urllib3_context
-import ssl
 import os
-import traceback
 import urllib3
 
 # Importar la clase Chatbot de chatbot.py

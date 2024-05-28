@@ -1,13 +1,12 @@
-from joblib import load
-from elasticsearch_dsl import Search
-import openai
-from urllib3.util.ssl_ import create_urllib3_context
-import ssl
-from elasticsearch import Elasticsearch
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
-import nltk
-from nltk.corpus import stopwords
+import ssl
+
+import openai  # type: ignore
+from elasticsearch import Elasticsearch  # type: ignore
+from elasticsearch_dsl import Search  # type: ignore
+from elasticsearch_dsl import Q  # type: ignore
+from joblib import load  # type: ignore
+from urllib3.util.ssl_ import create_urllib3_context
 
 
 class Chatbot:

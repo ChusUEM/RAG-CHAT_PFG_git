@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/chus/Desktop/PFG/CODIGO_PFG/envElastic"
+VIRTUAL_ENV="/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/envElastic"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

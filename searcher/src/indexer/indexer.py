@@ -1,22 +1,17 @@
 # Importar las librerías necesarias
-import ssl
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Q
-from elasticsearch_dsl import Search
 import os
-from urllib3 import disable_warnings, exceptions
-import jsonlines
-from urllib3.util.ssl_ import create_urllib3_context
-import urllib3
-import openai
-from gensim.corpora import Dictionary
-from gensim.models import TfidfModel
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import PCA
-from joblib import dump
-from nltk.corpus import stopwords
-import nltk
+import ssl
 
+import jsonlines  # type: ignore
+import nltk  # type: ignore
+import openai  # type: ignore
+import urllib3
+from elasticsearch import Elasticsearch  # type: ignore
+from joblib import dump  # type: ignore
+from nltk.corpus import stopwords  # type: ignore
+from sklearn.decomposition import PCA  # type: ignore
+from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
+from urllib3.util.ssl_ import create_urllib3_context
 
 nltk.download("stopwords")
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -39,7 +34,9 @@ class Indexer:
         context.verify_mode = ssl.CERT_NONE
         es_url = os.getenv("ELASTICSEARCH_URL")
         if not es_url:
-            raise ValueError("ELASTICSEARCH_URL environment variable is not set")
+            raise ValueError(
+                "ELASTICSEARCH_URL environment variable is not set"
+            )
         self.es = Elasticsearch(
             [es_url],
             http_auth=(

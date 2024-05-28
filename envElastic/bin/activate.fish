@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/chus/Desktop/PFG/CODIGO_PFG/envElastic"
+set -gx VIRTUAL_ENV "/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/envElastic"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
