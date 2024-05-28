@@ -7,3 +7,6 @@ __pycache__/
 #Ignorar archivos de .DS_Store
 .DS_
 >>>>>>> upgradeSearch
+
+#Ignorar archivos de .env
+envElastic/
