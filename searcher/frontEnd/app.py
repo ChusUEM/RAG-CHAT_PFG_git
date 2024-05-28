@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from elasticsearch import Elasticsearch
 import openai  # type: ignore
-from urllib3.util.ssl_ import create_urllib3_context
 import os
 import urllib3
 
