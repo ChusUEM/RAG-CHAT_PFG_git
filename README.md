@@ -3,38 +3,9 @@
 #https://www.elastic.co/search-labs/tutorials/chatbot-tutorial/welcome
 #Proyecto Final de Grado en Ingeniería Informática (Online). Universidad Europea de Madrid. Curso 2023-2024.
  Fase de obtención de datos en los blogs de la web oficial de la Universidad Europea de Madrid.
- 
-# Configuración inicial del entorno de desarrollo:
-# Scripts necesarios con HomeBrew (MacOS)
-#Open ssl //Certificados SSL
-`brew install openssl`
-#Python
-`brew install pyenv`
-`pyenv install 3.8.18`
-#Sqlite
-brew install sqlite` #sqlite==3.41.2
 
-# Crear el entorno virtual
-#Opcion a: Crear entorno de Python
-`python -m venv envElastic`
-#Activar entorno de Python
-`source envElastic/bin/activate`
-#Instalar dependencias --> 
-`cd searcher`
-`pip install -r requirements.txt`
-#Cargo las variables de entorno, desde el directorio raíz del proyecto
-`source .env` o `export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
-
-#Opcion b: Crear entorno de Conda
-`conda env create --name websearcher --file requirements.yml`
-#Activar entorno de Conda
-`conda activate websearcher`
-#Instalar dependencias
-`cd searcher`
-`conda env update --file requirements.yml --prune`
-
-
-# Docker (https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
+ # PASO 1: INSTALACIÓN DE DOCKER
+ #  Docker (https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
 Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el script:
   #Crear red Elastic y Kibana
   `docker network create elastic`
@@ -59,7 +30,7 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
   #Desde la consola, ejecutamos el siguiente comando para comprabar que el nodo de ElasticSearch está en funcionamiento:
   `curl -k -u <elastic-user>:<elastic-password> <elastic-url>/_nodes'`
 
-# Almacenar url, usuario y contraseña en zsh
+#  PASO 2: Almacenar la URL, usuario y contraseña en el PATH de ZSH
 #Abrir el archivo de configuración
 `open ~/.zshrc`
 #Añadir las siguientes líneas al final del archivo:
@@ -72,13 +43,43 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 #Guardar el archivo
 #Recargar el archivo de configuración
 #Reiniciar la terminal
+ 
+# PASO 3: Configuración inicial del entorno de desarrollo:
+#Scripts necesarios con HomeBrew (MacOS)
+#Open ssl //Certificados SSL
+`brew install openssl`
+#Python
+`brew install pyenv`
+`pyenv install 3.8.18`
 
-#Indexar datos en ElasticSearch
-#La salida del programa "elasticSearch.app" es el archivo "webpages_clean.jsonl", que contiene los datos de las páginas web de la Universidad Europea de Madrid preparados para ser indexados en ElasticSearch.
-#Desde la consola, navegar hasta la carpeta que contiene el archivo .jsonl a indexar (searcher/etc), y ejecutar el siguiente comando para indexar los datos en ElasticSearch:
-#curl -XPOST -u <elastic-user>:<elastic-password> <elastic-url>/_bulk -H "Content-Type: application/json" --data-binary @<file name> -k
+# PASO 4: Crear el entorno virtual
+#Opcion a: Crear entorno de Python
+`python -m venv envElastic`
+#Activar entorno de Python
+`source envElastic/bin/activate`
+#Instalar dependencias --> 
+`cd searcher`
+`pip install -r requirements.txt`
+#Cargo las variables de entorno, desde el directorio raíz del proyecto
+`source .env` o `export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
 
-# Kibana web
+#Opcion b: Crear entorno de Conda
+`conda env create --name websearcher --file requirements.yml`
+#Activar entorno de Conda
+`conda activate websearcher`
+#Instalar dependencias
+`cd searcher`
+`conda env update --file requirements.yml --prune`
+
+
+# PASO 5: Ejecución de los scripts contenidos en el crawler, adapter e indexer 
+#Acceder al directorio "/searcher"
+#Ejecutar los programas crawler, adapter, indexer y chatbot para realizar el proceso completo del TFG. Este proces obtendrá los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizará un proceso PLN, unirá los .json en uno solo y lo adaptará para crear un único archivo .jsonl preparado para indexar en ElasticSearch. Posteriormente realizará la indexación en Elasticsearch y ejecutará la aplicación web a través de la cual se realizarán las consultas al chatbot (pregunta-respuesta con búsqueda de la información en el índice vectorizado y almacenado en Elasticsearch, devolviendo la respuesta más precisa al usuario, así como los blogs de referencia sobre los que basa su respuesta).
+`python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
+`python -m src.adapter.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json". También adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
+`python -m src.indexer.app` --> indexa el contenido de "webpages_clean.jsonl" en ElasticSearch creando un índice de vectores.
+
+# PASO 6: Visualizar el estado de Elasticsearch a través de Kibana en la web.
 #Comprobar el nodo de ElasticSearch en el navegador web con la dirección http://localhost:9200: 
   Acceder a: http://localhost:5601/app/dev_tools#/console
   Introducir en la consola: `GET /_cat/nodes?v`
@@ -89,12 +90,15 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
   Seleccionar el índice webpages y hacer click en el botón "Discover Index" para visualizar la información.
 #Además, en el buscador podemos realizar búsquedas filtradas por los campos de las páginas web indexadas.
 
-# Ejecución del proyecto: 
-#Acceder al directorio "/searcher"
-#Ejecutar los programas crawler, adapter, indexer y chatbot para realizar el proceso completo del TFG. Este proces obtendrá los datos de los blogs de las páginas web de la Universidad Europea de Madrid, realizará un proceso PLN, unirá los .json en uno solo y lo adaptará para crear un único archivo .jsonl preparado para indexar en ElasticSearch. Posteriormente realizará la indexación en Elasticsearch y ejecutará la aplicación web a través de la cual se realizarán las consultas al chatbot (pregunta-respuesta con búsqueda de la información en el índice vectorizado y almacenado en Elasticsearch, devolviendo la respuesta más precisa al usuario, así como los blogs de referencia sobre los que basa su respuesta).
-`python -m src.crawler.app` --> obtenemos etc/webpages(archivos .json).
-`python -m src.adapter.app` --> procesa los archivos .json obtenidos almacenados en etc/webpages y los une en un solo archivo .json llamado "webpages_clean.json". También adapta el archivo "webpages_clean.json" en "webpages_clean.jsonl", para ser indexado posteriormente en ElasticSearch.
-`python -m src.indexer.app` --> indexa el contenido de "webpages_clean.jsonl" en ElasticSearch creando un índice de vectores.
+
+# PASO 7: Test ElasticSearch POR TERMINAL:
+Situarse en el directorio searcher/src/chat y ejecutar el siguiente comando para ejecutar el archivo:
+`python chatTerminal.py`
+Realizar una consulta al chatbot como ejemplo:
+¿Qué factores afectan al sueldo de un desarrollador web?
+
+
+# PASO 8: Ejecutar el archivo de la aplicación frontEnd
 `python frontEnd/app.py` --> ejecutar el frontEnd sobre el que se emitirán preguntas y se recibirán respuestas a través de consultas al índice de ElasticSearch.
 #En caso de obtener error de carga de variables de entorno (no se encuentra el directorio "src" por ejemplo), ejecutar el siguiente comando:
 `export PYTHONPATH="${PYTHONPATH}:/Users/chus/Desktop/PFG/RAG-CHAT_PFG_git/RAG-CHAT_PFG_git/searcher/src"`
@@ -103,12 +107,10 @@ Ejecución de un nodo ElasticSearch en un contenedor de Docker: Ejecutar el scri
 `kill -9 <PID>` --> PID es el número de proceso que aparece en la consola.
 
 
-
-# Test ElasticSearch POR TERMINAL:
-Ejecutar el siguiente comando para ejecutar el archivo:
-
-# Ejemplo de pregunta al chatbot:
-#¿Qué factores afectan al sueldo de un desarrollador web?
+# PASO 9: Realizar una consulta al chatbot a través de la aplicación web.
+Abrir el navegador web mencionado al ejecutar la aplicación: http://127.0.0.1:5001
+Ejemplo de pregunta al chatbot:
+¿Qué factores afectan al sueldo de un desarrollador web?
 
 
 

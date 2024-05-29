@@ -10,3 +10,6 @@ __pycache__/
 
 #Ignorar archivos de .env
 envElastic/
+
+#Ignorar archivos de .mypy_cache
+.mypy_cache
